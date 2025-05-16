@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '/screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'theme_provider.dart';
+import 'screens/home_screen.dart';
+import 'constants/app_theme.dart'; // << هنا
 
 void main() {
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
     ),
   );
 }
@@ -16,12 +18,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Weather App Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme, // << هنا
+      darkTheme: AppTheme.darkTheme, // << وهنا
+      themeMode: themeProvider.currentTheme,
       home: const HomeScreen(),
     );
   }
