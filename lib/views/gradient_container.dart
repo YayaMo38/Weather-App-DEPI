@@ -13,6 +13,35 @@ class GradientContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final brightness = Theme.of(context).brightness;
+
+    // نحدد الألوان حسب الوضع
+    final gradientColors = brightness == Brightness.dark
+        ? [
+            AppColors.black,
+            AppColors.secondaryBlack,
+            AppColors.secondaryBlack.withOpacity(.99),
+            AppColors.secondaryBlack.withOpacity(.98),
+            AppColors.secondaryBlack.withOpacity(.97),
+            AppColors.secondaryBlack.withOpacity(.96),
+            AppColors.secondaryBlack.withOpacity(.95),
+            AppColors.secondaryBlack.withOpacity(.94),
+            AppColors.secondaryBlack.withOpacity(.93),
+            AppColors.secondaryBlack.withOpacity(.92),
+            AppColors.secondaryBlack.withOpacity(.91),
+            AppColors.secondaryBlack.withOpacity(.90),
+            AppColors.darkBlue,
+            AppColors.accentBlue,
+            AppColors.lightBlue,
+          ]
+        : [
+            Colors.white,
+            AppColors.lightBlue.withOpacity(0.1),
+            AppColors.lightBlue.withOpacity(0.15),
+            AppColors.accentBlue.withOpacity(0.1),
+            Colors.white,
+          ];
+
     return SafeArea(
       child: Container(
         height: screenSize.height,
@@ -21,23 +50,7 @@ class GradientContainer extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
-            colors: [
-              AppColors.black,
-              AppColors.secondaryBlack,
-              AppColors.secondaryBlack.withOpacity(.99),
-              AppColors.secondaryBlack.withOpacity(.98),
-              AppColors.secondaryBlack.withOpacity(.97),
-              AppColors.secondaryBlack.withOpacity(.96),
-              AppColors.secondaryBlack.withOpacity(.95),
-              AppColors.secondaryBlack.withOpacity(.94),
-              AppColors.secondaryBlack.withOpacity(.93),
-              AppColors.secondaryBlack.withOpacity(.92),
-              AppColors.secondaryBlack.withOpacity(.91),
-              AppColors.secondaryBlack.withOpacity(.90),
-              AppColors.darkBlue,
-              AppColors.accentBlue,
-              AppColors.lightBlue,
-            ],
+            colors: gradientColors,
           ),
         ),
         child: Padding(

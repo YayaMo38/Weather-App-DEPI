@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '/constants/app_colors.dart';
-
-@immutable
 class TextStyles {
-  static const h1 = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w700,
-    color: AppColors.white,
-  );
+  static TextStyle h1(BuildContext context) => TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white,
+      );
 
-  static const h2 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    color: AppColors.white,
-  );
+  static TextStyle h2(BuildContext context) => TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white,
+      );
 
-  static const h3 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: AppColors.white,
-  );
+  static TextStyle h3(BuildContext context) => TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white,
+      );
 
-  static const subtitleText = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: AppColors.grey,
-  );
+  static TextStyle subtitleText(BuildContext context) => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
+      );
 
-  static const largeSubtitle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    color: Colors.white70,
-  );
+  static TextStyle largeSubtitle(BuildContext context) => TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7) ?? Colors.white70,
+      );
 }

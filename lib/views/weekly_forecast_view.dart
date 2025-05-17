@@ -9,6 +9,8 @@ import '/utils/get_weather_icons.dart';
 import '/widgets/subscript_text.dart';
 
 class WeeklyForecastView extends ConsumerWidget {
+
+  
   const WeeklyForecastView({super.key});
 
   @override
@@ -33,6 +35,7 @@ class WeeklyForecastView extends ConsumerWidget {
               day: dayOfWeek,
               icon: getWeatherIcon2(icon),
               temp: temp.round(),
+              isActive: index == 0,
             );
           },
         );
@@ -60,15 +63,23 @@ class WeeklyForecastTile extends StatelessWidget {
     required this.date,
     required this.temp,
     required this.icon,
+    required this.isActive
   });
 
   final String day;
   final String date;
   final int temp;
   final String icon;
-
+final bool isActive;
   @override
   Widget build(BuildContext context) {
+
+     final isDark = Theme.of(context).brightness == Brightness.dark;
+ 
+   final backgroundColor = isActive
+    ? (isDark ?  AppColors.lightBlue: AppColors.grey ) // ألوان العنصر المفعّل
+    : (isDark ? AppColors.accentBlue :AppColors.lightBlue ); 
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -88,12 +99,12 @@ class WeeklyForecastTile extends StatelessWidget {
             children: [
               Text(
                 day,
-                style: TextStyles.h3,
+                style: TextStyles.h3(context),
               ),
               const SizedBox(height: 5),
               Text(
                 date,
-                style: TextStyles.subtitleText,
+                style: TextStyles.subtitleText(context),
               ),
             ],
           ),

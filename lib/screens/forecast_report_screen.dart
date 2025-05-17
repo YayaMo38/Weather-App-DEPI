@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '/constants/app_colors.dart';
 import '/constants/text_styles.dart';
 import '/extensions/datetime.dart';
 import '/views/gradient_container.dart';
@@ -12,14 +11,16 @@ class ForecastReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GradientContainer(
       children: [
         // Page Title
-        const Align(
+        Align(
           alignment: Alignment.center,
           child: Text(
             'Forecast Report',
-            style: TextStyles.h1,
+            style: TextStyles.h1(context),
           ),
         ),
 
@@ -29,13 +30,13 @@ class ForecastReportScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Today',
-              style: TextStyles.h2,
+              style: TextStyles.h2(context),
             ),
             Text(
               DateTime.now().dateTime,
-              style: TextStyles.subtitleText,
+              style: TextStyles.subtitleText(context),
             ),
           ],
         ),
@@ -48,16 +49,16 @@ class ForecastReportScreen extends StatelessWidget {
         const SizedBox(height: 20),
 
         // Next Forecast
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'Next Forecast',
-              style: TextStyles.h2,
+              style: TextStyles.h2(context),
             ),
             Icon(
               Icons.calendar_month_rounded,
-              color: AppColors.white,
+              color: theme.iconTheme.color,
             ),
           ],
         ),

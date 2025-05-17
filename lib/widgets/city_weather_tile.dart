@@ -50,12 +50,12 @@ class CityWeatherTile extends ConsumerWidget {
                           children: [
                             Text(
                               '${weather.main.temp.round()}°',
-                              style: TextStyles.h2,
+                              style: TextStyles.h2(context),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               weather.weather[0].description,
-                              style: TextStyles.subtitleText,
+                              style: TextStyles.subtitleText(context),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                             ),

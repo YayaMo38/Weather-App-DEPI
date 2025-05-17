@@ -24,21 +24,16 @@ class WeatherScreen extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
-                  width: double.infinity,
-                ),
+                const SizedBox(width: double.infinity),
                 // Country name text
-                Text(
-                  weather.name,
-                  style: TextStyles.h1,
-                ),
+                Text(weather.name, style: TextStyles.h1(context)),
 
                 const SizedBox(height: 20),
 
                 // Today's date
                 Text(
                   DateTime.now().dateTime,
-                  style: TextStyles.subtitleText,
+                  style: TextStyles.subtitleText(context),
                 ),
 
                 const SizedBox(height: 30),
@@ -57,7 +52,7 @@ class WeatherScreen extends ConsumerWidget {
                 // Weather description
                 Text(
                   weather.weather[0].description.capitalize,
-                  style: TextStyles.h2,
+                  style: TextStyles.h2(context),
                 ),
               ],
             ),
@@ -70,22 +65,14 @@ class WeatherScreen extends ConsumerWidget {
             const SizedBox(height: 40),
 
             // Today Daily Forecast
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Today',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColors.white,
-                  ),
-                ),
+                Text('Today', style: TextStyles.h2(context)),
                 InkWell(
                   child: Text(
                     'View full report',
-                    style: TextStyle(
-                      color: AppColors.lightBlue,
-                    ),
+                    style: TextStyles.h2(context),
                   ),
                 ),
               ],
@@ -93,22 +80,16 @@ class WeatherScreen extends ConsumerWidget {
 
             const SizedBox(height: 15),
 
-            // hourly forcast
+            
             const HourlyForecastView(),
           ],
         );
       },
       error: (error, stackTrace) {
-        return const Center(
-          child: Text(
-            'An error has occurred',
-          ),
-        );
+        return const Center(child: Text('An error has occurred'));
       },
       loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

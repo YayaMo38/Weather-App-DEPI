@@ -30,14 +30,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const GradientContainer(
+    return  GradientContainer(
       children: [
         // Page title
         Align(
           alignment: Alignment.center,
           child: Text(
             'Pick Location',
-            style: TextStyles.h1,
+            style: TextStyles.h1(context),
           ),
         ),
 
@@ -46,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
         // Page subtitle
         Text(
           'Find the area or city that you want to know the detailed weather info at this time',
-          style: TextStyles.subtitleText,
+          style: TextStyles.subtitleText(context),
           textAlign: TextAlign.center,
         ),
 

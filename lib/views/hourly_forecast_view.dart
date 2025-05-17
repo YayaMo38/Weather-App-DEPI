@@ -8,9 +8,7 @@ import '/providers/get_hourly_forecast_provider.dart';
 import '/utils/get_weather_icons.dart';
 
 class HourlyForecastView extends ConsumerWidget {
-  const HourlyForecastView({
-    super.key,
-  });
+  const HourlyForecastView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +36,12 @@ class HourlyForecastView extends ConsumerWidget {
       },
       error: (error, stackTrace) {
         return Center(
-          child: Text(error.toString()),
+          child: Text(
+            error.toString(),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onBackground,
+            ),
+          ),
         );
       },
       loading: () {
@@ -66,6 +69,14 @@ class HourlyForcastTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+   final backgroundColor = isActive
+    ? (isDark ?  AppColors.lightBlue: AppColors.grey ) // ألوان العنصر المفعّل
+    : (isDark ? AppColors.accentBlue :AppColors.lightBlue ); 
+
+    final textColor = Theme.of(context).colorScheme.onBackground;
+
     return Padding(
       padding: const EdgeInsets.only(
         right: 16,
@@ -73,7 +84,7 @@ class HourlyForcastTile extends StatelessWidget {
         bottom: 12,
       ),
       child: Material(
-        color: isActive ? AppColors.lightBlue : AppColors.accentBlue,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(15.0),
         elevation: isActive ? 8 : 0,
         child: Padding(
@@ -95,14 +106,14 @@ class HourlyForcastTile extends StatelessWidget {
                 children: [
                   Text(
                     hour,
-                    style: const TextStyle(
-                      color: AppColors.white,
+                    style: TextStyle(
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 5),
                   Text(
                     '$temp°',
-                    style: TextStyles.h3,
+                    style: TextStyles.h3(context),
                   ),
                 ],
               ),

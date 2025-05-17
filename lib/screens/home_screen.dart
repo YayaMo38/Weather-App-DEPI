@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '/constants/app_colors.dart';
+import 'package:weatherly/constants/app_colors.dart';
 import '/screens/forecast_report_screen.dart';
 import '/screens/search_screen.dart';
 import '/screens/settings_screen.dart';
@@ -34,39 +33,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_currentPageIndex],
-      bottomNavigationBar: NavigationBarTheme(
-        data: const NavigationBarThemeData(
-          backgroundColor: AppColors.secondaryBlack,
-        ),
-        child: NavigationBar(
-          selectedIndex: _currentPageIndex,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          indicatorColor: Colors.transparent,
-          onDestinationSelected: (index) =>
-              setState(() => _currentPageIndex = index),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.home, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.search_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.search, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.wb_sunny_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.wb_sunny, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.settings, color: Colors.white),
-              label: '',
-            ),
-          ],
-        ),
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        selectedIndex: _currentPageIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        indicatorColor: Colors.transparent,
+        onDestinationSelected: (index) =>
+            setState(() => _currentPageIndex = index),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: '',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_outlined),
+            selectedIcon: Icon(Icons.search),
+            label: '',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.wb_sunny_outlined),
+            selectedIcon: Icon(Icons.wb_sunny),
+            label: '',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: '',
+          ),
+        ],
       ),
     );
   }

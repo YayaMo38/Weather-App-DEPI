@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '/constants/app_colors.dart';
-
 class RoundTextField extends StatelessWidget {
   const RoundTextField({
     super.key,
@@ -12,30 +10,32 @@ class RoundTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       height: 55,
       decoration: BoxDecoration(
-        color: AppColors.accentBlue,
+        color: theme.colorScheme.surface.withOpacity(0.2),
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: TextField(
-        style: const TextStyle(
-          color: AppColors.white,
+        style: TextStyle(
+          color: theme.colorScheme.onBackground,
         ),
         controller: controller,
-        decoration: const InputDecoration(
-          fillColor: Colors.white,
-          focusColor: Colors.white,
+        decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.search,
-            color: AppColors.grey,
+            color: theme.colorScheme.onBackground.withOpacity(0.6),
           ),
           border: InputBorder.none,
           hintText: 'Search',
           hintStyle: TextStyle(
-            color: AppColors.grey,
+            color: theme.colorScheme.onBackground.withOpacity(0.5),
             fontWeight: FontWeight.w400,
           ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         ),
       ),
     );

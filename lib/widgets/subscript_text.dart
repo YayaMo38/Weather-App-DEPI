@@ -17,7 +17,8 @@ class SuperscriptText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
           text,
@@ -27,12 +28,15 @@ class SuperscriptText extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-        Text(
-          superScript,
-          style: TextStyle(
-            color: superscriptColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w300,
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            superScript,
+            style: TextStyle(
+              color: superscriptColor,
+              fontSize: 18,
+              fontWeight: FontWeight.w300,
+            ),
           ),
         ),
       ],

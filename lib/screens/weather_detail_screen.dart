@@ -35,7 +35,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Country name text
                   Text(
                     weather.name,
-                    style: TextStyles.h1,
+                    style: TextStyles.h1(context),
                   ),
 
                   const SizedBox(height: 20),
@@ -43,7 +43,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Today's date
                   Text(
                     DateTime.now().dateTime,
-                    style: TextStyles.subtitleText,
+                    style: TextStyles.subtitleText(context),
                   ),
 
                   const SizedBox(height: 50),
@@ -62,7 +62,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Weather description
                   Text(
                     weather.weather[0].description.capitalize,
-                    style: TextStyles.h2,
+                    style: TextStyles.h2(context),
                   ),
                 ],
               ),

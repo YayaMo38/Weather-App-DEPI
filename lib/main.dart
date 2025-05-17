@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'theme_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/home_screen.dart';
-import 'constants/app_theme.dart'; // << هنا
+import 'constants/app_theme.dart';
+import 'theme_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme, // << هنا
-      darkTheme: AppTheme.darkTheme, // << وهنا
-      themeMode: themeProvider.currentTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: theme.currentTheme,
       home: const HomeScreen(),
     );
   }

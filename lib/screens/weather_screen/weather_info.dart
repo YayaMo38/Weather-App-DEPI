@@ -57,12 +57,12 @@ class WeatherInfoTile extends StatelessWidget {
         // Title
         Text(
           title,
-          style: TextStyles.subtitleText,
+          style: TextStyles.subtitleText(context),
         ),
         const SizedBox(height: 10),
         Text(
           value,
-          style: TextStyles.h3,
+          style: TextStyles.h3(context),
         )
       ],
     );
