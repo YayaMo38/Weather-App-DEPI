@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '/constants/text_styles.dart';
 import '/extensions/datetime.dart';
 import '/extensions/strings.dart';
+import '/models/weather.dart';
 import '/providers/get_city_forecast_provider.dart';
+import '/providers/theme_provider.dart';
 import '/screens/weather_screen/weather_info.dart';
 import '/views/gradient_container.dart';
+import '/constants/app_colors.dart';
 
 class WeatherDetailScreen extends ConsumerWidget {
   const WeatherDetailScreen({
     super.key,
-    required this.cityName,
-  });
+    this.cityName,
+    this.weather,
+  }) : assert(cityName != null || weather != null, 'Either cityName or weather must be provided');
 
-  final String cityName;
+  final String? cityName;
+  final Weather? weather;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final weatherData = ref.watch((cityForecastProvider(cityName)));
+    // If weather is provided directly, use it, otherwise fetch it using the provider
+    final weatherData = weather != null
+        ? AsyncValue.data(weather!)
+        : ref.watch(cityForecastProvider(cityName!));
+    
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
 
     return Scaffold(
       body: weatherData.when(
@@ -35,7 +44,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Country name text
                   Text(
                     weather.name,
-                    style: TextStyles.h1,
+                    style: isLightMode ? TextStyles.lightH1.copyWith(color: AppColors.darkText) : TextStyles.h1,
                   ),
 
                   const SizedBox(height: 20),
@@ -43,7 +52,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Today's date
                   Text(
                     DateTime.now().dateTime,
-                    style: TextStyles.subtitleText,
+                    style: isLightMode ? TextStyles.lightSubtitleText.copyWith(color: AppColors.darkText.withOpacity(0.7)) : TextStyles.subtitleText,
                   ),
 
                   const SizedBox(height: 50),
@@ -62,7 +71,7 @@ class WeatherDetailScreen extends ConsumerWidget {
                   // Weather description
                   Text(
                     weather.weather[0].description.capitalize,
-                    style: TextStyles.h2,
+                    style: isLightMode ? TextStyles.lightH2.copyWith(color: AppColors.darkText) : TextStyles.h2,
                   ),
                 ],
               ),
@@ -70,22 +79,25 @@ class WeatherDetailScreen extends ConsumerWidget {
               const SizedBox(height: 40),
 
               // Weather info in a row
-              WeatherInfo(weather: weather),
+              WeatherInfo(weather: weather, isLightMode: isLightMode),
 
               const SizedBox(height: 15),
             ],
           );
         },
         error: (error, stackTrace) {
-          return const Center(
+          return Center(
             child: Text(
               'An error has occurred',
+              style: TextStyle(color: isLightMode ? AppColors.darkText : Colors.white),
             ),
           );
         },
         loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(isLightMode ? AppColors.primaryBlue : Colors.white),
+            ),
           );
         },
       ),

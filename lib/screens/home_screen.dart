@@ -1,72 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants/app_colors.dart';
-import '/screens/forecast_report_screen.dart';
+import '/providers/get_current_weather_provider.dart';
+import '/providers/theme_provider.dart';
+import '/screens/weather_screen/weather_screen.dart';
 import '/screens/search_screen.dart';
+import '/screens/forecast_report_screen.dart';
 import '/screens/settings_screen.dart';
-import 'weather_screen/weather_screen.dart';
-import '/services/api_helper.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentPageIndex = 0;
-
-  final _screens = const [
-    WeatherScreen(),
-    SearchScreen(),
-    ForecastReportScreen(),
-    SettingsScreen(),
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _currentIndex = 0;
+  
+  final List<Widget> _screens = [
+    const WeatherScreen(), 
+    const SearchScreen(),
+    const ForecastReportScreen(),
+    const SettingsScreen(),
   ];
-
+  
   @override
   void initState() {
-    ApiHelper.getCurrentWeather();
     super.initState();
+    // Invalidate the provider to refresh weather data when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(currentWeatherProvider);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
+    
     return Scaffold(
-      body: _screens[_currentPageIndex],
-      bottomNavigationBar: NavigationBarTheme(
-        data: const NavigationBarThemeData(
-          backgroundColor: AppColors.secondaryBlack,
-        ),
-        child: NavigationBar(
-          selectedIndex: _currentPageIndex,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          indicatorColor: Colors.transparent,
-          onDestinationSelected: (index) =>
-              setState(() => _currentPageIndex = index),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.home, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.search_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.search, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.wb_sunny_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.wb_sunny, color: Colors.white),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.settings, color: Colors.white),
-              label: '',
-            ),
-          ],
-        ),
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          
+          // Refresh weather data when returning to the home screen
+          if (index == 0) {
+            ref.invalidate(currentWeatherProvider);
+          }
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: isLightMode ? AppColors.primaryBlue : AppColors.lightBlue,
+        unselectedItemColor: isLightMode ? AppColors.lightGrey : AppColors.grey,
+        backgroundColor: isLightMode ? AppColors.lightSecondaryBg : AppColors.secondaryBlack,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.cloud),
+            label: 'Weather',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Forecast',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
       ),
     );
   }

@@ -1,31 +1,31 @@
 String getWeatherIcon({
   required int weatherCode,
 }) {
-  String weatherCondition = '01d';
+  String weatherIcon = '01d';
 
   if (weatherCode == 801) {
-    weatherCondition = 'assets/icons/02d.png';
+    weatherIcon = '02d';
   } else if (weatherCode == 802) {
-    weatherCondition = 'assets/icons/03d.png';
+    weatherIcon = '03d';
   } else if (weatherCode == 803) {
-    weatherCondition = 'assets/icons/04d.png';
+    weatherIcon = '04d';
   } else if (weatherCode == 804) {
-    weatherCondition = 'assets/icons/04d.png';
+    weatherIcon = '04d';
   } else if (weatherCode == 800) {
-    weatherCondition = 'assets/icons/01d.png';
+    weatherIcon = '01d';
   } else if (weatherCode > 700) {
-    weatherCondition = 'assets/icons/50d.png';
+    weatherIcon = '50d';
   } else if (weatherCode >= 600) {
-    weatherCondition = 'assets/icons/13d.png';
+    weatherIcon = '13d';
   } else if (weatherCode >= 500) {
-    weatherCondition = 'assets/icons/10d.png';
+    weatherIcon = '10d';
   } else if (weatherCode >= 300) {
-    weatherCondition = 'assets/icons/09d.png';
+    weatherIcon = '09d';
   } else if (weatherCode >= 200) {
-    weatherCondition = 'assets/icons/11d.png';
+    weatherIcon = '11d';
   }
 
-  return weatherCondition;
+  return 'assets/icons/${weatherIcon}.png';
 }
 
 //! Mpas weather codes (from opne-meteo) to image urls

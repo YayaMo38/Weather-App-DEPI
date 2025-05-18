@@ -1,39 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants/app_colors.dart';
+import '/providers/theme_provider.dart';
 
-class RoundTextField extends StatelessWidget {
+class RoundTextField extends ConsumerWidget {
   const RoundTextField({
     super.key,
     this.controller,
+    this.onSubmitted,
   });
 
   final TextEditingController? controller;
+  final Function(String)? onSubmitted;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
+    
     return Container(
       height: 55,
       decoration: BoxDecoration(
-        color: AppColors.accentBlue,
+        color: isLightMode ? AppColors.lightAccentBlue : AppColors.accentBlue,
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: TextField(
-        style: const TextStyle(
-          color: AppColors.white,
+        style: TextStyle(
+          color: isLightMode ? AppColors.darkText : AppColors.white,
         ),
         controller: controller,
-        decoration: const InputDecoration(
+        onSubmitted: onSubmitted,
+        decoration: InputDecoration(
           fillColor: Colors.white,
           focusColor: Colors.white,
           prefixIcon: Icon(
             Icons.search,
-            color: AppColors.grey,
+            color: isLightMode ? AppColors.lightGrey : AppColors.grey,
           ),
           border: InputBorder.none,
           hintText: 'Search',
           hintStyle: TextStyle(
-            color: AppColors.grey,
+            color: isLightMode ? AppColors.lightGrey : AppColors.grey,
             fontWeight: FontWeight.w400,
           ),
         ),

@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/constants/app_colors.dart';
 import '/constants/text_styles.dart';
 import '/extensions/datetime.dart';
+import '/extensions/temperature_extensions.dart'; // Add this import
 import '/providers/get_weekly_forecast_provider.dart';
+import '/providers/temperature_unit_provider.dart'; // Add this import
+import '/providers/theme_provider.dart'; // Import theme provider
 import '/utils/get_weather_icons.dart';
 import '/widgets/subscript_text.dart';
 
@@ -14,6 +17,9 @@ class WeeklyForecastView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weeklyForecast = ref.watch(weeklyForecastProvider);
+    final temperatureUnit = ref.watch(temperatureUnitProvider); // For temperature conversion
+    final themeMode = ref.watch(themeProvider); // For checking light/dark mode
+    final isLightMode = themeMode == ThemeMode.light;
 
     return weeklyForecast.when(
       data: (weatherData) {
@@ -33,6 +39,8 @@ class WeeklyForecastView extends ConsumerWidget {
               day: dayOfWeek,
               icon: getWeatherIcon2(icon),
               temp: temp.round(),
+              temperatureUnit: temperatureUnit,
+              isLightMode: isLightMode, // Pass light mode info
             );
           },
         );
@@ -60,15 +68,29 @@ class WeeklyForecastTile extends StatelessWidget {
     required this.date,
     required this.temp,
     required this.icon,
+    required this.temperatureUnit,
+    required this.isLightMode,
   });
 
   final String day;
   final String date;
   final int temp;
   final String icon;
+  final TemperatureUnit temperatureUnit;
+  final bool isLightMode;
 
   @override
   Widget build(BuildContext context) {
+    // Convert temperature if needed
+    final displayTemp = temperatureUnit == TemperatureUnit.celsius
+        ? temp
+        : (temp * 9 / 5 + 32).round();
+    final unitSymbol = temperatureUnit == TemperatureUnit.celsius ? '°C' : '°F';
+
+    // Set color based on theme
+    final textColor = isLightMode ? AppColors.darkText : AppColors.white;
+    final bgColor = isLightMode ? AppColors.lightSecondaryBg : AppColors.accentBlue;
+
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -79,7 +101,14 @@ class WeeklyForecastTile extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: AppColors.accentBlue,
+        color: bgColor,
+        boxShadow: isLightMode ? [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ] : null,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,22 +117,26 @@ class WeeklyForecastTile extends StatelessWidget {
             children: [
               Text(
                 day,
-                style: TextStyles.h3,
+                style: isLightMode
+                    ? TextStyles.lightH3.copyWith(color: textColor)
+                    : TextStyles.h3,
               ),
               const SizedBox(height: 5),
               Text(
                 date,
-                style: TextStyles.subtitleText,
+                style: isLightMode
+                    ? TextStyles.lightSubtitleText.copyWith(color: textColor.withOpacity(0.7))
+                    : TextStyles.subtitleText,
               ),
             ],
           ),
 
           // Temperature
           SuperscriptText(
-            text: '$temp',
-            color: AppColors.white,
-            superScript: '°C',
-            superscriptColor: AppColors.white,
+            text: '$displayTemp',
+            color: isLightMode ? AppColors.darkText : AppColors.white,
+            superScript: unitSymbol,
+            superscriptColor: isLightMode ? AppColors.darkText : AppColors.white,
           ),
 
           // weather icon
