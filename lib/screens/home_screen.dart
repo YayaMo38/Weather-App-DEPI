@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants/app_colors.dart';
+import '/providers/theme_provider.dart';
 import '/screens/forecast_report_screen.dart';
 import '/screens/search_screen.dart';
 import '/screens/settings_screen.dart';
 import 'weather_screen/weather_screen.dart';
 import '/services/api_helper.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentPageIndex = 0;
 
   final _screens = const [
@@ -32,11 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
+    final iconColor = isLightMode ? AppColors.darkText : AppColors.white;
+    
     return Scaffold(
       body: _screens[_currentPageIndex],
       bottomNavigationBar: NavigationBarTheme(
-        data: const NavigationBarThemeData(
-          backgroundColor: AppColors.secondaryBlack,
+        data: NavigationBarThemeData(
+          backgroundColor: isLightMode 
+              ? AppColors.lightSecondaryBg 
+              : AppColors.secondaryBlack,
         ),
         child: NavigationBar(
           selectedIndex: _currentPageIndex,
@@ -44,25 +51,25 @@ class _HomeScreenState extends State<HomeScreen> {
           indicatorColor: Colors.transparent,
           onDestinationSelected: (index) =>
               setState(() => _currentPageIndex = index),
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.home, color: Colors.white),
+              icon: Icon(Icons.home_outlined, color: iconColor),
+              selectedIcon: Icon(Icons.home, color: iconColor),
               label: '',
             ),
             NavigationDestination(
-              icon: Icon(Icons.search_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.search, color: Colors.white),
+              icon: Icon(Icons.search, color: iconColor),
+              selectedIcon: Icon(Icons.search, color: iconColor),
               label: '',
             ),
             NavigationDestination(
-              icon: Icon(Icons.wb_sunny_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.wb_sunny, color: Colors.white),
+              icon: Icon(Icons.calendar_today_outlined, color: iconColor),
+              selectedIcon: Icon(Icons.calendar_today, color: iconColor),
               label: '',
             ),
             NavigationDestination(
-              icon: Icon(Icons.settings_outlined, color: Colors.white),
-              selectedIcon: Icon(Icons.settings, color: Colors.white),
+              icon: Icon(Icons.settings_outlined, color: iconColor),
+              selectedIcon: Icon(Icons.settings, color: iconColor),
               label: '',
             ),
           ],

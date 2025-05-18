@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants/app_colors.dart';
 import '/constants/text_styles.dart';
+import '/models/weather.dart';
+import '/services/api_helper.dart';
 import '/views/famous_cities_weather.dart';
 import '/views/gradient_container.dart';
 import '/widgets/round_text_field.dart';
+import '/providers/theme_provider.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   late final TextEditingController _searchController;
 
   @override
@@ -28,67 +32,71 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
   }
 
+  void _searchLocation(String query) async {
+    if (query.isEmpty) return;
+    
+    try {
+      final Weather weather = await ApiHelper.getWeatherByCityName(cityName: query);
+      if (!mounted) return;
+      
+      Navigator.pushNamed(
+        context,
+        '/weather_detail',
+        arguments: weather,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not find weather for "$query". Please try another location.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const GradientContainer(
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
+    
+    return GradientContainer(
       children: [
-        // Page title
-        Align(
-          alignment: Alignment.center,
+        SizedBox(
+          width: double.infinity,
           child: Text(
-            'Pick Location',
-            style: TextStyles.h1,
+            'Search',
+            style: isLightMode ? TextStyles.lightH1 : TextStyles.h1,
           ),
         ),
 
-        SizedBox(height: 20),
+        const SizedBox(height: 35),
 
-        // Page subtitle
-        Text(
-          'Find the area or city that you want to know the detailed weather info at this time',
-          style: TextStyles.subtitleText,
-          textAlign: TextAlign.center,
+        // Custom Textfield with a round border
+        RoundTextField(
+          controller: _searchController,
+          onSubmitted: _searchLocation,
         ),
 
-        SizedBox(height: 40),
+        const SizedBox(height: 35),
 
-        // Pick location row
         Row(
           children: [
-            // Choose city text field
-            Expanded(
-              child: RoundTextField(),
+            Text(
+              'Famous Cities',
+              style: TextStyle(
+                fontSize: 16,
+                color: isLightMode ? AppColors.darkText.withOpacity(0.7) : AppColors.white, // Ensure dark gray in light mode
+              ),
             ),
-            SizedBox(width: 15),
-
-            LocationIcon(),
           ],
         ),
 
-        SizedBox(height: 30),
+        const SizedBox(height: 15),
 
-        FamousCitiesWeather(),
+        // Famous cities
+        FamousCitiesWeather(isLightMode: isLightMode),
       ],
-    );
-  }
-}
-
-class LocationIcon extends StatelessWidget {
-  const LocationIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 55,
-      width: 55,
-      decoration: BoxDecoration(
-        color: AppColors.accentBlue,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: const Icon(
-        Icons.location_on_outlined,
-        color: AppColors.grey,
-      ),
     );
   }
 }

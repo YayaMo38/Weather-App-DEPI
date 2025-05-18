@@ -7,7 +7,10 @@ import '/widgets/city_weather_tile.dart';
 class FamousCitiesWeather extends StatelessWidget {
   const FamousCitiesWeather({
     super.key,
+    this.isLightMode = false,
   });
+  
+  final bool isLightMode;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class FamousCitiesWeather extends StatelessWidget {
           child: CityWeatherTile(
             index: index,
             city: city,
+            isLightMode: isLightMode,
           ),
         );
       },

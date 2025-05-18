@@ -6,6 +6,7 @@ import '/constants/text_styles.dart';
 import '/extensions/datetime.dart';
 import '/extensions/strings.dart';
 import '/providers/get_current_weather_provider.dart';
+import '/providers/theme_provider.dart';
 import '/views/gradient_container.dart';
 import '/views/hourly_forecast_view.dart';
 import 'weather_info.dart';
@@ -16,6 +17,9 @@ class WeatherScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weatherData = ref.watch(currentWeatherProvider);
+    final isLightMode = ref.watch(themeProvider) == ThemeMode.light;
+    final textColor = isLightMode ? AppColors.darkText : AppColors.white;
+    // temperatureUnit is handled inside WeatherInfo and HourlyForecastView
 
     return weatherData.when(
       data: (weather) {
@@ -30,7 +34,7 @@ class WeatherScreen extends ConsumerWidget {
                 // Country name text
                 Text(
                   weather.name,
-                  style: TextStyles.h1,
+                  style: isLightMode ? TextStyles.lightH1.copyWith(color: AppColors.darkText) : TextStyles.h1,
                 ),
 
                 const SizedBox(height: 20),
@@ -38,7 +42,7 @@ class WeatherScreen extends ConsumerWidget {
                 // Today's date
                 Text(
                   DateTime.now().dateTime,
-                  style: TextStyles.subtitleText,
+                  style: isLightMode ? TextStyles.lightSubtitleText.copyWith(color: AppColors.darkText.withOpacity(0.7)) : TextStyles.subtitleText,
                 ),
 
                 const SizedBox(height: 30),
@@ -57,7 +61,7 @@ class WeatherScreen extends ConsumerWidget {
                 // Weather description
                 Text(
                   weather.weather[0].description.capitalize,
-                  style: TextStyles.h2,
+                  style: isLightMode ? TextStyles.lightH2.copyWith(color: AppColors.darkText) : TextStyles.h2,
                 ),
               ],
             ),
@@ -65,26 +69,29 @@ class WeatherScreen extends ConsumerWidget {
             const SizedBox(height: 40),
 
             // Weather info in a row
-            WeatherInfo(weather: weather),
+            WeatherInfo(
+              weather: weather,
+              isLightMode: isLightMode,
+            ),
 
             const SizedBox(height: 40),
 
             // Today Daily Forecast
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Today',
                   style: TextStyle(
                     fontSize: 20,
-                    color: AppColors.white,
+                    color: textColor, // This already uses AppColors.darkText in light mode
                   ),
                 ),
                 InkWell(
                   child: Text(
                     'View full report',
                     style: TextStyle(
-                      color: AppColors.lightBlue,
+                      color: isLightMode ? AppColors.primaryBlue : AppColors.lightBlue,
                     ),
                   ),
                 ),
@@ -93,21 +100,24 @@ class WeatherScreen extends ConsumerWidget {
 
             const SizedBox(height: 15),
 
-            // hourly forcast
-            const HourlyForecastView(),
+            // hourly forecast
+            HourlyForecastView(isLightMode: isLightMode), // isLightMode is already passed
           ],
         );
       },
       error: (error, stackTrace) {
-        return const Center(
+        return Center(
           child: Text(
             'An error has occurred',
+            style: TextStyle(color: textColor),
           ),
         );
       },
       loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
+        return Center(
+          child: CircularProgressIndicator(
+            color: isLightMode ? AppColors.lightBlue : AppColors.white,
+          ),
         );
       },
     );
