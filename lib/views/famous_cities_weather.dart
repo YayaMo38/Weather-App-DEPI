@@ -10,7 +10,10 @@ import '/widgets/city_weather_tile.dart';
 class FamousCitiesWeather extends ConsumerWidget {
   const FamousCitiesWeather({
     super.key,
+    this.isLightMode = false,
   });
+  
+  final bool isLightMode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
