@@ -28,8 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  shared_preferences: ^2.5.3
-  provider: ^6.1.5
+  
   flutter:
     sdk: flutter
 
@@ -41,6 +40,7 @@ dependencies:
   jiffy: ^6.4.3
   geolocator: ^14.0.0
   shared_preferences: ^2.5.3
+  provider: ^6.1.5
 
 dev_dependencies:
   flutter_test:

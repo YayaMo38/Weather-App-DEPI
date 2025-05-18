@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '/constants/constants.dart';
 import '/models/hourly_weather.dart';
 import '/models/weather.dart';
 import '/models/weekly_weather.dart';
+import '/providers/location_provider.dart';
 import '/services/getlocator.dart';
 import '/utils/logging.dart';
 
@@ -19,10 +21,45 @@ class ApiHelper {
   static final dio = Dio();
 
   //! Get lat and lon
-  static Future<void> fetchLocation() async {
+  static Future<void> fetchLocation([dynamic ref]) async {
+    if (ref != null) {
+      final locationData = ref.read(locationProvider);
+      if (locationData.source == LocationSource.manual && 
+          locationData.latitude != null && 
+          locationData.longitude != null) {
+        lat = locationData.latitude!;
+        lon = locationData.longitude!;
+        return;
+      } else if (locationData.source == LocationSource.manual && 
+                locationData.cityName != null) {
+        try {
+          // Get coordinates by city name
+          final weather = await getWeatherByCityName(cityName: locationData.cityName!);
+          lat = weather.coord.lat;
+          lon = weather.coord.lon;
+          // Update the provider with coordinates
+          ref.read(locationProvider.notifier).useManualLocation(
+            cityName: locationData.cityName!,
+            latitude: lat,
+            longitude: lon,
+          );
+          return;
+        } catch (e) {
+          printWarning('Error getting coordinates for city: ${locationData.cityName}. Falling back to GPS.');
+          // Fall back to GPS if city name doesn't work
+        }
+      }
+    }
+    
+    // Default to GPS if no ref provided or manual location not available/valid
     final location = await getLocation();
     lat = location.latitude;
     lon = location.longitude;
+    
+    // Update the provider with GPS coordinates if ref is available
+    if (ref != null && ref.read(locationProvider).source == LocationSource.gps) {
+      ref.read(locationProvider.notifier).updateGpsCoordinates(lat, lon);
+    }
   }
 
   //* Current Weather
@@ -31,6 +68,22 @@ class ApiHelper {
     final url = _constructWeatherUrl();
     final response = await _fetchData(url);
     return Weather.fromJson(response);
+  }
+  
+  //* Current Weather for a specific location from the provider
+  static Future<Weather> getCurrentWeatherForLocation(Ref ref) async {
+    await fetchLocation(ref);
+    final locationData = ref.read(locationProvider);
+    
+    if (locationData.source == LocationSource.manual && locationData.cityName != null) {
+      // Get weather by city name
+      return getWeatherByCityName(cityName: locationData.cityName!);
+    } else {
+      // Get weather by coordinates
+      final url = _constructWeatherUrl();
+      final response = await _fetchData(url);
+      return Weather.fromJson(response);
+    }
   }
 
   //* Hourly Weather
@@ -54,6 +107,8 @@ class ApiHelper {
     required String cityName,
   }) async {
     final url = _constructWeatherByCityUrl(cityName);
+    // Log the URL to check if it's correctly formatted
+    printInfo('Fetching weather for city: $cityName using URL: $url');
     final response = await _fetchData(url);
     return Weather.fromJson(response);
   }
@@ -66,7 +121,7 @@ class ApiHelper {
       '$baseUrl/forecast?lat=$lat&lon=$lon&units=metric&appid=${Constants.apiKey}';
 
   static String _constructWeatherByCityUrl(String cityName) =>
-      '$baseUrl/weather?q=$cityName&units=metric&appid=${Constants.apiKey}';
+      '$baseUrl/weather?q=$cityName&units=metric&appid=${Constants.apiKey}'; // Ensure API key is here
 
   static String _constructWeeklyForecastUrl() =>
       '$weeklyWeatherUrl&latitude=$lat&longitude=$lon';
@@ -79,12 +134,18 @@ class ApiHelper {
       if (response.statusCode == 200) {
         return response.data;
       } else {
-        printWarning('Failed to load data: ${response.statusCode}');
-        throw Exception('Failed to load data');
+        // Log detailed error for non-200 status codes
+        printWarning('Failed to load data from $url. Status Code: ${response.statusCode}, Response: ${response.data}');
+        throw Exception('Failed to load data. Status Code: ${response.statusCode}');
       }
     } catch (e) {
-      printWarning('Error fetching data from $url: $e');
-      throw Exception('Error fetching data');
+      // Log the full error object, including DioError details if available
+      if (e is DioError) {
+        printWarning('DioError fetching data from $url: ${e.message}, Response: ${e.response?.data}, Type: ${e.type}');
+      } else {
+        printWarning('Error fetching data from $url: $e');
+      }
+      throw Exception('Error fetching data: $e');
     }
   }
 }

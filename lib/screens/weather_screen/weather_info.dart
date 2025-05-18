@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/constants/app_colors.dart';
 import '/constants/text_styles.dart';
 import '/extensions/double.dart';
-import '/extensions/temperature_extensions.dart'; // Add this import
+import '/extensions/temperature_extensions.dart';
 import '/models/weather.dart';
-import '/providers/temperature_unit_provider.dart'; // Add this import
+import '/providers/temperature_unit_provider.dart';
 
-class WeatherInfo extends ConsumerWidget { // Change to ConsumerWidget
+class WeatherInfo extends ConsumerWidget {
   const WeatherInfo({
     super.key,
     required this.weather,
@@ -19,8 +19,8 @@ class WeatherInfo extends ConsumerWidget { // Change to ConsumerWidget
   final bool isLightMode;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) { // Add WidgetRef
-    final temperatureUnit = ref.watch(temperatureUnitProvider); // Add this
+  Widget build(BuildContext context, WidgetRef ref) {
+    final temperatureUnit = ref.watch(temperatureUnitProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -31,7 +31,7 @@ class WeatherInfo extends ConsumerWidget { // Change to ConsumerWidget
         children: [
           WeatherInfoTile(
             title: 'Temp',
-            value: weather.main.temp.formatTemperature(temperatureUnit), // Update to use extension
+            value: weather.main.temp.formatTemperature(temperatureUnit),
             isLightMode: isLightMode,
           ),
           WeatherInfoTile(

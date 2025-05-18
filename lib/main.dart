@@ -1,39 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '/constants/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; 
 import '/models/weather.dart';
-import '/providers/theme_provider.dart';
+import '/providers/theme_provider.dart'; // Updated import path
 import '/screens/home_screen.dart';
 import '/screens/search_screen.dart';
+import '/screens/select_cities_screen.dart';
 import '/screens/weather_detail_screen.dart';
+import 'constants/app_theme.dart'; 
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
   runApp(
-    const ProviderScope(
+    const ProviderScope( 
       child: MyApp(),
     ),
   );
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerWidget { 
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the theme provider to get the current theme mode
-    final themeMode = ref.watch(themeProvider);
-    
+  Widget build(BuildContext context, WidgetRef ref) { 
+    final themeMode = ref.watch(themeProvider); 
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Weather App Demo',
-      themeMode: themeMode,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme, 
+      darkTheme: AppTheme.darkTheme, 
+      themeMode: themeMode, 
       home: const HomeScreen(),
+      // Define the named routes
       routes: {
         '/search': (context) => const SearchScreen(),
+        '/select_cities': (context) => const SelectCitiesScreen(),
       },
+      // Define the route generator for routes with parameters
       onGenerateRoute: (settings) {
         if (settings.name == '/weather_detail') {
           final Weather weather = settings.arguments as Weather;
@@ -41,6 +42,7 @@ class MyApp extends ConsumerWidget {
             builder: (context) => WeatherDetailScreen(weather: weather),
           );
         }
+        // Return null to let Flutter handle routes it doesn't recognize
         return null;
       },
     );
